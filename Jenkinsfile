@@ -33,7 +33,7 @@ pipeline {
             }
             steps {
                 script {
-                    buildImage()
+                    buildImage "laweee/demo-java-maven-app:1.3"
                 }
             }
         }
