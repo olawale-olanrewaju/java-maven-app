@@ -59,5 +59,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Commit version update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'ola-github-login', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        sh 'git config --global user.email "jenkins@email.com"'
+                        sh 'git config --global user.name "jenkins"'
+
+                        sh 'git status'
+                        sh 'git branch'
+                        sh 'git config --list'
+
+                        sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/olawale-olanrewaju/java-maven-app.git"
+                        sh 'git add .'
+                        sh 'git commit -m "Bumping up versions"'
+                        sh 'git push origin HEAD:jenkins-jobs'
+                    }
+                }
+            }
+        }
     }
 }
