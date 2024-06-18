@@ -1,22 +1,32 @@
 #!/usr/bin/env groovy
 
 pipeline {
-    agent none
+    agent any
+    tools {
+        maven 'MAVEN'
+    }
     stages {
-        stage('build') {
+        stage('build jar') {
             steps {
                 script {
                     echo "Building the application..."
+                    sh "mvn package"
                 }
             }
         }
-        stage('test') {
-            steps {
-                script {
-                    echo "Testing the application..."
+        stage('build image') {
+                    steps {
+                        script {
+                            echo "Building the Docker image..."
+                            withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME') ]) {
+                                sh 'docker build -t laweee/laweee/demo-java-maven-app:1.2'
+                                sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+//                                 sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 058264545261.dkr.ecr.us-east-1.amazonaws.com"
+                                sh 'docker push laweee/laweee/demo-java-maven-app:1.2'
+                            }
+                        }
+                    }
                 }
-            }
-        }
         stage('deploy') {
             steps {
                 script {
