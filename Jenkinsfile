@@ -26,11 +26,11 @@ pipeline {
             }
         }
         stage('Build and Publish Image') {
-            when {
-                expression {
-                    BRANCH_NAME == 'master'
-                }
-            }
+//             when {
+//                 expression {
+//                     BRANCH_NAME == 'master'
+//                 }
+//             }
             steps {
                 script {
                     buildImage "laweee/demo-java-maven-app:1.3"
@@ -38,11 +38,11 @@ pipeline {
             }
         }
         stage('Deploy App') {
-            when {
-                expression {
-                    BRANCH_NAME == 'master'
-                }
-            }
+//             when {
+//                 expression {
+//                     BRANCH_NAME == 'master'
+//                 }
+//             }
             steps {
                 script {
                     gv.deployApp()
