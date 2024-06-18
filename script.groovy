@@ -10,6 +10,7 @@ def buildImage() {
         sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
         sh 'docker push laweee/demo-java-maven-app:1.3'
     } 
+}
 
 def deployApp() {
     echo 'deploying the application...'
