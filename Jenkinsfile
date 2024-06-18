@@ -2,7 +2,14 @@
 
 // @Library('jenkins-shared-library')_
 
-@Library('jenkins-shared-library')
+library identifier: 'jenkins-shared-library@master', retriever: modernSCM(
+    [$class: 'GitSCMSource',
+    remote: 'https://github.com/olawale-olanrewaju/jenkins-shared-library',
+    credentialsId: 'ola-github-login'
+    ]
+)
+
+// @Library('jenkins-shared-library') //import library from global Jenkins standard library
 def gv
 
 pipeline {
