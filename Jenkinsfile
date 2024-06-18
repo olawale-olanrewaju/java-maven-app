@@ -34,6 +34,8 @@ pipeline {
             steps {
                 script {
                     buildImage "laweee/demo-java-maven-app:1.3"
+                    dockerLogin()
+                    dockerPush "laweee/demo-java-maven-app:1.3"
                 }
             }
         }
