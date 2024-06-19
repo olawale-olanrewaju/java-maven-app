@@ -15,6 +15,10 @@ def buildImage() {
 
 def deployApp() {
     echo "Deploying the application..."
+    def dockerCmd = 'docker run -d -p 3000:80 laweee/nodejs-react-app:1.0'
+    sshagent(['ec2-ssh-server-key']) {
+        sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${dockerCmd}"
+    }
 }
 
 return this
