@@ -9,4 +9,4 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRESS_PASSWORD:my-pid
+      - POSTGRES_PASSWORD:my-pid
