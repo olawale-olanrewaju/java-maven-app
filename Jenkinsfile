@@ -6,7 +6,7 @@ pipeline {
         maven 'MAVEN'
     }
     environment {
-        IMAGE_NAME = 'laweee/demo-java-maven-app:1.2'
+        IMAGE_NAME = 'laweee/demo-java-maven-app:1.3'
     }
     stages {
         stage('Build Jar') {
