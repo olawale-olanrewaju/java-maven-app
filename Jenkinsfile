@@ -31,7 +31,7 @@ pipeline {
                 script {
                     echo "Deploying the application..."
                     def dockerCmd = 'docker run -d -p 8080:8080 laweee/demo-java-maven-app:1.2'
-                    sshagent(['ec2-ssh-server-key']) {
+                    sshagent(['ec2-ssh-key-global']) {
                         sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${dockerCmd}"
                     }
                 }
