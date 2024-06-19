@@ -5,6 +5,9 @@ pipeline {
     tools {
         maven 'MAVEN'
     }
+    environment {
+        IMAGE_NAME = 'laweee/demo-java-maven-app:1.2'
+    }
     stages {
         stage('Build Jar') {
             steps {
@@ -19,9 +22,9 @@ pipeline {
                 script {
                     echo "Building the Docker image..."
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME') ]) {
-                        sh 'docker build -t laweee/demo-java-maven-app:1.2 .'
+                        sh "docker build -t $IMAGE_NAME ."
                         sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
-                        sh 'docker push laweee/demo-java-maven-app:1.2'
+                        sh "docker push $IMAGE_NAME"
                     }
                 }
             }
@@ -30,7 +33,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying the application..."
-                    def shellCmd = 'bash ./server-cmds.sh'
+                    def shellCmd = "bash ./server-cmds.sh $IMAGE_NAME"
                     sshagent(['ec2-ssh-key-global']) {
                         sh 'scp server-cmds.sh ubuntu@3.82.175.76:/home/ubuntu'
                         sh 'scp docker-compose.yaml ubuntu@3.82.175.76:/home/ubuntu'
