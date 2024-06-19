@@ -30,10 +30,11 @@ pipeline {
             steps {
                 script {
                     echo "Deploying the application..."
-                    def dockerComposeCmd = 'docker compose up --detach'
+                    def shellCmd = 'bash ./server-cmds.sh'
                     sshagent(['ec2-ssh-key-global']) {
+                        sh 'scp server-cmds.sh ubuntu@3.82.175.76:/home/ubuntu'
                         sh 'scp docker-compose.yaml ubuntu@3.82.175.76:/home/ubuntu'
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${dockerComposeCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${shellCmd}"
                     }
                 }
             }
