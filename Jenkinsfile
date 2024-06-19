@@ -5,10 +5,25 @@ pipeline {
     tools {
         maven 'MAVEN'
     }
-    environment {
-        IMAGE_NAME = 'laweee/demo-java-maven-app:1.3'
-    }
+//     environment {
+//         IMAGE_NAME = 'laweee/demo-java-maven-app:1.3'
+//     }
     stages {
+        stage('Increment version') {
+            steps {
+                script {
+                    echo 'Incrementing app version'
+                    sh 'mvn build-helper:parse-version versions:set \
+                    -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                    versions:commit'
+                    def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+//                     env.IMAGE_VERSION = "$version-$BUILD_NUMBER"
+                    env.IMAGE_VERSION = "${version}"
+                    env.IMAGE_NAME = "laweee/demo-java-maven-app:$IMAGE_VERSION"
+                }
+            }
+        }
         stage('Build Jar') {
             steps {
                 script {
@@ -39,6 +54,53 @@ pipeline {
                         sh "scp server-cmds.sh $ec2Instance:/home/ubuntu"
                         sh "scp docker-compose.yaml $ec2Instance:/home/ubuntu"
                         sh "ssh -o StrictHostKeyChecking=no $ec2Instance $shellCmd"
+                    }
+                }
+            }
+        }
+        stage('Commit version updated') {
+            steps {
+                script {
+//                     withCredentials([usernamePassword(credentialsId: 'github-login', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+//                         sh 'git config --global user.email "jenkins@email.com"'
+//                         sh 'git config --global user.name "jenkins"'
+//
+//                         sh 'git status'
+//                         sh 'git branch'
+//                         sh 'git config --list'
+//
+//                         sh "git remote set-url origin git@github.com:olawale-olanrewaju/java-maven-app.git"
+//                         sh 'git add .'
+//                         sh 'git commit -m "Bumping up versions"'
+//                         sh 'git push origin HEAD:jenkins-jobs'
+//                     }
+
+//                     withCredentials([sshUserPrivateKey(credentialsId: 'github-login-ssh', keyFileVariable: '')]) {
+//                         sh 'git config --global user.email "jenkins@email.com"'
+//                         sh 'git config --global user.name "jenkins"'
+//
+//                         sh 'git status'
+//                         sh 'git branch'
+//                         sh 'git config --list'
+//
+//                         sh "git remote set-url origin git@github.com:olawale-olanrewaju/java-maven-app.git"
+//                         sh 'git add .'
+//                         sh 'git commit -m "Bumping up versions"'
+//                         sh 'git push origin HEAD:jenkins-jobs'
+//                     }
+
+                    sshagent(['github-login-ssh']) {
+                        sh 'git config --global user.email "jenkins@email.com"'
+                        sh 'git config --global user.name "jenkins"'
+
+                        sh 'git status'
+                        sh 'git branch'
+                        sh 'git config --list'
+
+                        sh "git remote set-url origin git@github.com:olawale-olanrewaju/java-maven-app.git"
+                        sh 'git add .'
+                        sh 'git commit -m "Bumping up versions"'
+                        sh 'git push origin HEAD:jenkins-jobs'
                     }
                 }
             }
