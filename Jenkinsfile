@@ -90,17 +90,15 @@ pipeline {
 //                     }
 
                     sshagent(['github-login-ssh']) {
-                        sh 'git config --global user.email "jenkins@email.com"'
-                        sh 'git config --global user.name "jenkins"'
-
                         sh 'git status'
                         sh 'git branch'
                         sh 'git config --list'
-
                         sh "git remote set-url origin git@github.com:olawale-olanrewaju/java-maven-app.git"
+                        sh 'git config --list'
+
                         sh 'git add .'
                         sh 'git commit -m "Bumping up versions"'
-                        sh 'git push origin HEAD:jenkins-jobs'
+                        sh "git push origin HEAD:$BRANCH_NAME"
                     }
                 }
             }
