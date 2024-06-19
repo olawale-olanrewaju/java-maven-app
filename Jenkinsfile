@@ -30,9 +30,10 @@ pipeline {
             steps {
                 script {
                     echo "Deploying the application..."
-                    def dockerCmd = 'docker run -d -p 8080:8080 laweee/demo-java-maven-app:1.2'
+                    def dockerComposeCmd = 'docker-compose up --detach'
                     sshagent(['ec2-ssh-key-global']) {
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${dockerCmd}"
+                        sh 'scp docker-compose.yaml ubuntu@3.82.175.76:/home/ubuntu'
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@3.82.175.76 ${dockerComposeCmd}"
                     }
                 }
             }
