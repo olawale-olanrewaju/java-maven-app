@@ -18,14 +18,12 @@ pipeline {
             }
         }
         stage('Deploy App') {
-            environment {
-                AWS_ACCESS_KEY_ID = credentials('jenkins-aws_access_key_id')
-                AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws_secret_access_key')
-            }
             steps {
                 script {
                     echo "Deploying the application..."
-                    sh "kubectl create deployment nginx-deployment --image=nginx"
+                    withKubeCredentials(kubectlCredentials: [credentialsId: 'linode-k8s-cluster', serverUrl: 'https://d00de7a4-ea02-430f-a746-06c5c19518f4.eu-west-1.linodelke.net:443']) {
+                        sh "kubectl create deployment nginx-deployment --image=nginx"
+                    }
                 }
             }
         }
